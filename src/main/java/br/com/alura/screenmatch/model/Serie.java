@@ -1,20 +1,44 @@
 package br.com.alura.screenmatch.model;
 
 import br.com.alura.screenmatch.service.traducao.ConsultaMyMemory;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalDouble;
 
+
+@Entity
+@Table(name = "series")
 public class Serie {
-    private String tiutlo;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String titulo;
+
     private Integer totalTemporadas;
+
     private Double avaliacao;
+
+    @Enumerated(EnumType.STRING)
     private Categoria genero;
+
     private String atores;
+
     private String poster;
+
     private String sinopse;
 
+    @Transient
+    private List<Episodio> episodios = new ArrayList<>();
+
+    public Serie() {}
+
     public Serie(DadosSerie dadosSerie) {
-        this.tiutlo = dadosSerie.titulo();
+        this.titulo = dadosSerie.titulo();
         this.totalTemporadas = dadosSerie.totalTemporadas();
         this.avaliacao = OptionalDouble.of(Double.parseDouble(dadosSerie.avaliacao())).orElse(0);
         this.genero = Categoria.fromString(dadosSerie.genero().split(",")[0].trim());
@@ -23,8 +47,16 @@ public class Serie {
         this.sinopse = ConsultaMyMemory.traduzirString(dadosSerie.sinopse());
     }
 
-    public String getTiutlo() {
-        return tiutlo;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitulo() {
+        return titulo;
     }
 
     public Integer getTotalTemporadas() {
@@ -51,8 +83,8 @@ public class Serie {
         return sinopse;
     }
 
-    public void setTiutlo(String tiutlo) {
-        this.tiutlo = tiutlo;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
     public void setTotalTemporadas(Integer totalTemporadas) {
@@ -79,10 +111,18 @@ public class Serie {
         this.sinopse = sinopse;
     }
 
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        this.episodios = episodios;
+    }
+
     @Override
     public String toString() {
         return "genero=" + genero +
-                ", tiutlo='" + tiutlo + '\'' +
+                ", tiutlo='" + titulo + '\'' +
                 ", totalTemporadas=" + totalTemporadas +
                 ", avaliacao=" + avaliacao +
                 ", atores='" + atores + '\'' +
